@@ -39,7 +39,7 @@ void fix_above(MinHeap* h, int pos, int* dist) {
 	}
 }
 
-void min_MinHeap_insert(MinHeap* h, int i, int* dist) {
+void min_heap_insert(MinHeap* h, int i, int* dist) {
 	if (h->pos < h->max) {
 		h->v[h->pos] = dist[i];
 		fix_above(h, h->pos, dist);
@@ -75,7 +75,7 @@ void fix_below(MinHeap* h, int* dist) {
 	}
 }
 
-int min_MinHeap_remove(MinHeap* h, int* dist) {
+int min_heap_remove(MinHeap* h, int* dist) {
 	if (h->pos > 0) {
 		int top = h->v[0];
 		h->v[0] = h->v[h->pos-1];
