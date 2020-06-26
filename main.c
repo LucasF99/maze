@@ -15,7 +15,7 @@ Prof. Augusto Baffa
 #define DELAY 5
 
 #define SHOW_PROCESSING 1
-#define ALG 0   // 0 DFS, 1 PILHA_DFS, 2 BFS 
+#define ALG 3   // 0 DFS, 1 PILHA_DFS, 2 BFS, 3 BFS alterado
 	
 int dfs(int v, PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)]){
 
@@ -124,6 +124,42 @@ int bfs(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGraph
 	return state;
 }
 
+int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)]){
+
+	if(fila_vazia(fila))
+		return 0;
+
+	int state = 0;
+	int v = fila_retira(fila);
+	int w;
+	visited[v] = 1;
+
+	player->current_vertex = v;
+	player->current_y = vertex_to_map_y(player->current_vertex, maze_getFileCols(maze));
+	player->current_x = vertex_to_map_x(player->current_vertex, maze_getFileCols(maze));
+	player->steps++;
+	
+	if(SHOW_PROCESSING) {
+		display(player, maze);
+		printf(" >> Executando BFS2\n");
+		
+		msleep(DELAY);
+	}
+
+	if(maze_getFileTile(maze, player->current_y, player->current_x) == 'F')
+		return 1;
+
+	for (w = 0; w < maze_getGraphV(maze); w++){
+		if (maze_getGraphEdge(maze, v,w) && !visited[w]){
+			fila_insere(fila, w);
+			visited[w] = 1; // marca como visitado quando é adicionado à fila
+		}
+	}
+
+	state = bfs2(fila, player, maze, visited);
+	
+	return state;
+}
 
 int main() {
 	clock_t t;
@@ -218,6 +254,29 @@ int main() {
 			t = clock() - t; 
 			display(player, maze);
 			printf("Não encontrado c/ BFS em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+		}
+	}
+	else if(ALG == 3){
+
+		///////////////////////////////////////////////////////
+		// chamar BFS
+		Fila* fila = fila_cria ();
+		fila_insere(fila, player->current_vertex);
+		
+		t = clock(); 
+		if(bfs2(fila, player, maze, visited)){
+			t = clock() - t; 
+			display(player, maze);
+			printf("Final encontrado c/ BFS2 em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+	
+			for(w = 0; w < maze_getGraphV(maze); w++)
+				if(visited[w])
+					maze_print_path(maze, w);        
+		}
+		else{
+			t = clock() - t; 
+			display(player, maze);
+			printf("Não encontrado c/ BFS2 em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
 		}
 	}
 
