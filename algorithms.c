@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "algorithms.h"
+#include "min_heap.h"
 
 #define SHOW_PROCESSING 1
 #define DELAY 5
@@ -146,4 +148,18 @@ int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGrap
 	state = bfs2(fila, player, maze, visited);
 	
 	return state;
+}
+
+int heuristic(MazeDef* maze, int v, int w) {
+
+	int v_x, v_y, w_x, w_y;
+	int cols = maze_getFileCols(maze);
+
+	v_x = vertex_to_map_x(v, cols);
+	v_y = vertex_to_map_y(v, cols);
+
+	w_x = vertex_to_map_x(w, cols);
+	w_y = vertex_to_map_y(w, cols);
+
+	return abs(v_x - w_x) + abs(v_y - w_y);
 }
