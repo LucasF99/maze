@@ -9,9 +9,10 @@ Prof. Augusto Baffa
 #include <stdlib.h>
 #include <time.h>
 
+#include "min_heap.h"
 #include "algorithms.h"
 
-#define ALG 3   // 0 DFS, 1 PILHA_DFS, 2 BFS, 3 BFS alterado
+#define ALG 4   // 0 DFS, 1 PILHA_DFS, 2 BFS, 3 BFS alterado, 4 Dijkstra
 
 int main() {
 	clock_t t;
@@ -35,7 +36,7 @@ int main() {
 	display(player, maze);
 	
 	int visited[maze_getGraphV(maze)];
-	
+
 	for (w = 0; w < maze_getGraphV(maze); w++) // inicializa visitados    
 		visited[w] = 0;
 
@@ -129,6 +130,26 @@ int main() {
 			t = clock() - t; 
 			display(player, maze);
 			printf("Não encontrado c/ BFS2 em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+		}
+	} else if(ALG == 4){
+
+		///////////////////////////////////////////////////////
+		// chamar Dijkstra
+		
+		t = clock(); 
+		if(dijkstra(player, maze, player->current_vertex, visited)){
+			t = clock() - t; 
+			display(player, maze);
+			printf("Final encontrado c/ Dijkstra em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+	
+			for(w = 0; w < maze_getGraphV(maze); w++)
+				if(visited[w])
+					maze_print_path(maze, w);        
+		}
+		else{
+			t = clock() - t; 
+			display(player, maze);
+			printf("Não encontrado c/ Dijkstra em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
 		}
 	}
 

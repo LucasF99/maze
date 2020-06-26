@@ -9,3 +9,5 @@ int pilha_dfs(Pilha* pilha, PlayerDef* player, MazeDef* maze, int visited[maze_g
 int bfs(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)]);
 
 int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)]);
+
+int dijkstra(PlayerDef* player, MazeDef* maze, int start, int visited[maze_getGraphV(maze)]);

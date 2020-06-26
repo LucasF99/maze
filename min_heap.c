@@ -41,7 +41,7 @@ void fix_above(MinHeap* h, int pos, int* dist) {
 
 void min_heap_insert(MinHeap* h, int i, int* dist) {
 	if (h->pos < h->max) {
-		h->v[h->pos] = dist[i];
+		h->v[h->pos] = i;
 		fix_above(h, h->pos, dist);
 		h->pos++;
 	} else {
@@ -50,8 +50,26 @@ void min_heap_insert(MinHeap* h, int i, int* dist) {
 	}
 }
 
-void fix_below(MinHeap* h, int* dist) {
-	int parent = 0;
+void min_heap_find_and_update(MinHeap* h, int x, int* dist) {
+	int i;
+	for (i = 0; i < h->pos; i++) {
+		if (h->v[i] == x) {
+			break;
+		}
+	}
+	h->v[i] = h->v[h->pos-1];
+	h->pos--;
+	int parent = (i-1) / 2;
+	if (dist[h->v[i]] < dist[h->v[parent]]) {
+		fix_above(h, i, dist);
+	} else {
+		fix_below(h, i, dist);
+	}
+	min_heap_insert(h, x, dist);
+}
+
+void fix_below(MinHeap* h, int pos, int* dist) {
+	int parent = pos;
 	int child_l, child_r, child;
 
 	while(2 * parent+1 < h->pos) {
@@ -80,10 +98,19 @@ int min_heap_remove(MinHeap* h, int* dist) {
 		int top = h->v[0];
 		h->v[0] = h->v[h->pos-1];
 		h->pos--;
-		fix_below(h, dist);
+		fix_below(h, 0, dist);
 		return top;
 	} else {
 		printf("MinHeap vazio!\n");
 		return -1;
 	}
+}
+
+void heap_print(MinHeap* h, int* dist) {
+	int i;
+	printf("\n");
+    for(i=0; i < h->pos; i++)
+        printf("-> %d ", dist[h->v[i]]);
+
+    printf("->__/\\__\n");
 }

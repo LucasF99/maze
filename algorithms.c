@@ -150,6 +150,67 @@ int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGrap
 	return state;
 }
 
+int dijkstra(PlayerDef* player, MazeDef* maze, int start,
+				int visited[maze_getGraphV(maze)]) {
+
+	int state = 0;
+	int i;
+	int v, w;
+	int node_n = maze_getGraphV(maze);
+	int dist[maze_getGraphV(maze)];
+	int prev[maze_getGraphV(maze)];
+
+	//visited[v] = 1;
+
+	MinHeap* heap = heap_create(node_n);
+
+	dist[start] = 0;
+	prev[start] = -1;
+	for (i = 0; i < node_n; i++) {
+		if (i != start) {
+			dist[i] = (node_n + 1) * 100;
+			prev[i] = -1;
+		}
+		min_heap_insert(heap, i, dist);
+	}
+
+	printf("Heap inicializada\n");
+
+	v = min_heap_remove(heap, dist);
+	while (v > -1) {
+
+		player->current_vertex = v;
+		player->current_y = vertex_to_map_y(player->current_vertex, maze_getFileCols(maze));
+		player->current_x = vertex_to_map_x(player->current_vertex, maze_getFileCols(maze));
+		player->steps++;
+
+		if(SHOW_PROCESSING) {
+			display(player, maze);
+			printf(" >> Executando Dijkstra\n");
+			
+			msleep(DELAY);
+		}
+
+		if(maze_getFileTile(maze, player->current_y, player->current_x) == 'F')
+			return 1;
+
+		for (w = 0; w < node_n; w++){
+			if (maze_getGraphEdge(maze, v, w) && !visited[w]){
+				int new_dist = dist[v] + maze_getGraphEdge(maze, v, w);
+				if (new_dist < dist[w]) {
+					dist[w] = new_dist;
+					prev[w] = v;
+					min_heap_find_and_update(heap, w, dist);
+				}
+			}
+		}
+
+		visited[v] = 1;
+		v = min_heap_remove(heap, dist);
+	}
+	return 0;
+}
+
 int heuristic(MazeDef* maze, int v, int w) {
 
 	int v_x, v_y, w_x, w_y;
