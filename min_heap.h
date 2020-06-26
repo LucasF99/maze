@@ -1,10 +1,10 @@
 typedef struct heap MinHeap;
 
-MinHeap* MinHeap_create(int max);
+MinHeap* heap_create(int max);
 
 void swap(int i, int j, int *v);
 
-void MinHeap_free(MinHeap* h);
+void heap_free(MinHeap* h);
 
 void fix_above(MinHeap* h, int pos, int* dist);
 

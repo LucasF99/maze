@@ -9,7 +9,7 @@ struct heap {
 	int pos;
 };
 
-MinHeap* MinHeap_create(int max) {
+MinHeap* heap_create(int max) {
 	MinHeap* h = malloc(sizeof(MinHeap));
 	h->max = max;
 	h->pos = 0;
@@ -22,7 +22,7 @@ void swap(int i, int j, int *v) {
 	v[j] = aux;
 }
 
-void MinHeap_free(MinHeap* h) {
+void heap_free(MinHeap* h) {
 	free(h->v);
 	free(h);
 }
