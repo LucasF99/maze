@@ -135,16 +135,16 @@ int main() {
 
 		///////////////////////////////////////////////////////
 		// chamar Dijkstra
-		
-		t = clock(); 
-		if(dijkstra(player, maze, player->current_vertex, visited)){
+		int* prev;
+
+		t = clock();
+		prev = dijkstra(player, maze, player->current_vertex, visited);
+		if(prev){
 			t = clock() - t; 
 			display(player, maze);
 			printf("Final encontrado c/ Dijkstra em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
 	
-			for(w = 0; w < maze_getGraphV(maze); w++)
-				if(visited[w])
-					maze_print_path(maze, w);        
+			dijkstra_draw_path(maze, prev);       
 		}
 		else{
 			t = clock() - t; 

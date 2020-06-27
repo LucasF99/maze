@@ -3,7 +3,7 @@
 #include "algorithms.h"
 #include "min_heap.h"
 
-#define SHOW_PROCESSING 1
+#define SHOW_PROCESSING 0
 #define DELAY 5
 
 int dfs(int v, PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)]){
@@ -150,15 +150,14 @@ int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGrap
 	return state;
 }
 
-int dijkstra(PlayerDef* player, MazeDef* maze, int start,
+int* dijkstra(PlayerDef* player, MazeDef* maze, int start,
 				int visited[maze_getGraphV(maze)]) {
 
-	int state = 0;
 	int i;
 	int v, w;
 	int node_n = maze_getGraphV(maze);
 	int dist[maze_getGraphV(maze)];
-	int prev[maze_getGraphV(maze)];
+	int* prev = malloc(maze_getGraphV(maze) * sizeof(int));
 
 	//visited[v] = 1;
 
@@ -192,7 +191,7 @@ int dijkstra(PlayerDef* player, MazeDef* maze, int start,
 		}
 
 		if(maze_getFileTile(maze, player->current_y, player->current_x) == 'F')
-			return 1;
+			return prev;
 
 		for (w = 0; w < node_n; w++){
 			if (maze_getGraphEdge(maze, v, w) && !visited[w]){
@@ -208,7 +207,35 @@ int dijkstra(PlayerDef* player, MazeDef* maze, int start,
 		visited[v] = 1;
 		v = min_heap_remove(heap, dist);
 	}
-	return 0;
+	return NULL;
+}
+
+void dijkstra_draw_path(MazeDef* maze, int* prev) {
+	int i;
+	int in_path[maze_getGraphV(maze)];
+
+	int f_x = maze_getFinishX(maze);
+	int f_y = maze_getFinishY(maze);
+
+	int f = map_to_vertex(f_y, f_x, maze_getFileCols(maze));
+
+	int v = prev[f];
+
+	for (i = 0; i < maze_getGraphV(maze); i++) {
+		in_path[i] = 0;
+	}
+
+	while (v != -1) {
+		in_path[v] = 1;
+		v = prev[v];
+	}
+
+	for (i = 0; i < maze_getGraphV(maze); i++) {
+		if (in_path[i]) {
+			maze_print_path(maze, i);
+		}
+	}
+	maze_print_path(maze, f);
 }
 
 int heuristic(MazeDef* maze, int v, int w) {

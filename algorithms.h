@@ -10,4 +10,6 @@ int bfs(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGraph
 
 int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)]);
 
-int dijkstra(PlayerDef* player, MazeDef* maze, int start, int visited[maze_getGraphV(maze)]);
+int* dijkstra(PlayerDef* player, MazeDef* maze, int start, int visited[maze_getGraphV(maze)]);
+
+void dijkstra_draw_path(MazeDef* maze, int* prev);
