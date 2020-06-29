@@ -12,7 +12,12 @@ Prof. Augusto Baffa
 #include "min_heap.h"
 #include "algorithms.h"
 
-#define ALG 4   // 0 DFS, 1 PILHA_DFS, 2 BFS, 3 BFS alterado, 4 Dijkstra
+#define ALG 5   // 0 DFS
+				// 1 PILHA_DFS
+				// 2 BFS
+				// 3 BFS alterado
+				// 4 Dijkstra
+				// 5 A*
 
 int main() {
 	clock_t t;
@@ -143,6 +148,30 @@ int main() {
 			t = clock() - t; 
 			display(player, maze);
 			printf("Final encontrado c/ Dijkstra em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+	
+			dijkstra_draw_path(maze, prev);       
+		}
+		else{
+			t = clock() - t; 
+			display(player, maze);
+			printf("Não encontrado c/ Dijkstra em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+		}
+	} else if(ALG == 5){
+
+		///////////////////////////////////////////////////////
+		// chamar Dijkstra
+		int* prev;
+
+		int f_x = maze_getFinishX(maze);
+		int f_y = maze_getFinishY(maze);
+		int finish = map_to_vertex(f_y, f_x, maze_getFileCols(maze));
+
+		t = clock();
+		prev = a_star(player, maze, player->current_vertex, finish, visited);
+		if(prev){
+			t = clock() - t; 
+			display(player, maze);
+			printf("Final encontrado c/ A* em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
 	
 			dijkstra_draw_path(maze, prev);       
 		}

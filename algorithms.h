@@ -13,3 +13,7 @@ int bfs2(Fila* fila,  PlayerDef* player, MazeDef* maze, int visited[maze_getGrap
 int* dijkstra(PlayerDef* player, MazeDef* maze, int start, int visited[maze_getGraphV(maze)]);
 
 void dijkstra_draw_path(MazeDef* maze, int* prev);
+
+int* a_star(PlayerDef* player, MazeDef* maze, int start, int finish, int visited[maze_getGraphV(maze)]);
+
+int heuristic(MazeDef* maze, int v, int w);
