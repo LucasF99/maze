@@ -318,3 +318,118 @@ int heuristic(MazeDef* maze, int v, int w) {
 
 	return abs(v_x - w_x) + abs(v_y - w_y);
 }
+
+static int** cria_matriz (int rows, int cols) { // creates dynamic matrix with rows x cols entries
+	int **m = (int**) malloc(rows * sizeof(int*));
+	for (int i=0; i<rows; i++) {
+		m[i] = (int*)malloc(cols * sizeof(int));
+	}
+	return m;
+}
+
+static void libera_matriz (int** m, int rows) { // frees dynamic matrix
+	for (int i=0; i<rows; i++) {
+		free(m[i]);
+	}
+	free(m);
+}
+
+static void floyd_warshall_alg (PlayerDef* player, MazeDef* maze, int** dist, int** prox, 
+																	int visited[maze_getGraphV(maze)]) {
+	int node_n = maze_getGraphV(maze);
+
+	// initializing dist with infinity
+	for (int i=0; i<node_n; i++) {
+		for (int j=0; j<node_n; j++) {
+			if (i == j) // same vertex, distance to itself is zero
+				dist[i][j] = 0;
+			else 
+				dist[i][j] = 1073741773; // big number used as 'infinity'
+		}
+	}
+
+	// initializing prox with -1 (NULL)
+	for (int i=0; i<node_n; i++) {
+		for (int j=0; j<node_n; j++) {
+			if (i == j)
+				prox[i][j] = i;
+			else
+				prox[i][j] = -1;
+		}
+	}
+
+	// filling dist and prox with graph edges
+	for (int i=0; i<node_n; i++) {
+		for (int j=0; j<node_n; j++) {
+			int edge = maze_getGraphEdge(maze, i, j);
+			if (edge) { // edge exists, fills tables with its value
+				dist[i][j] = edge;
+				prox[i][j] = j;
+			}
+		}
+	}
+
+	// running Floyd Warshall
+	for (int k=0; k<node_n; k++) {
+		visited[k] = 1;
+		player->current_vertex = k;
+		player->current_y = vertex_to_map_y(player->current_vertex, maze_getFileCols(maze));
+		player->current_x = vertex_to_map_x(player->current_vertex, maze_getFileCols(maze));
+		player->steps++;
+
+		if(SHOW_PROCESSING) {
+			display(player, maze);
+			printf(" >> Executando Floyd-Warshall\n");
+			
+			msleep(DELAY);
+		}
+
+		for (int i=0; i<node_n; i++) {
+			for (int j=0; j<node_n; j++) {
+				if (dist[i][j] > dist[i][k] + dist[k][j]) {
+					dist[i][j] = dist[i][k] + dist[k][j];
+					prox[i][j] = prox[i][k];
+				}
+			}
+		}
+	}
+}
+
+int** floyd_warshall(PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)], int** prox) {
+	// Returns and displays for shortest path between 'I' and 'F'
+	int node_n = maze_getGraphV(maze);
+	int** dist = cria_matriz(node_n, node_n);	
+	prox = cria_matriz(node_n, node_n);	
+
+	floyd_warshall_alg(player, maze, dist, prox, visited); // calculates shortest path from all nodes to all nodes
+
+	libera_matriz(dist, node_n);
+
+	return prox;
+}
+
+void floyd_warshall_draw_path(MazeDef* maze, int** prox, int start, int finish) { 
+	// retrieving path from start to finish
+	int node_n = maze_getGraphV(maze);
+	
+	int* in_path = (int*) malloc(node_n*sizeof(int)); // flag vector for nodes in shortest path
+	for (int i = 0; i < node_n; i++) {
+		in_path[i] = 0;
+	}
+
+	while (start != finish) {
+		start = prox[start][finish];
+		in_path[start] = 1; // node 'start' is in path
+	}
+
+	for (int i = 0; i < node_n; i++) {
+		if (in_path[i]) {
+			maze_print_path(maze, i);
+		}
+	}
+	maze_print_path(maze, finish);
+
+	free(in_path);
+	libera_matriz(prox, node_n);
+	prox = NULL;
+}

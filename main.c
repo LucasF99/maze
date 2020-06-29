@@ -12,12 +12,13 @@ Prof. Augusto Baffa
 #include "min_heap.h"
 #include "algorithms.h"
 
-#define ALG 5   // 0 DFS
+#define ALG 6   // 0 DFS
 				// 1 PILHA_DFS
 				// 2 BFS
 				// 3 BFS alterado
 				// 4 Dijkstra
 				// 5 A*
+				// 6 Floyd-Warshall
 
 int main() {
 	clock_t t;
@@ -179,6 +180,34 @@ int main() {
 			t = clock() - t; 
 			display(player, maze);
 			printf("Não encontrado c/ Dijkstra em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+		}
+	} else if(ALG == 6){
+
+		///////////////////////////////////////////////////////
+		// chamar Floyd-Warshall
+		int** prox;
+
+		t = clock();
+		prox = floyd_warshall(player, maze, visited, prox);
+		t = clock() - t; 
+
+		int i_x = maze_getStartX(maze);
+		int i_y = maze_getStartY(maze);
+		int i = map_to_vertex(i_y, i_x, maze_getFileCols(maze));
+
+		int f_x = maze_getFinishX(maze);
+		int f_y = maze_getFinishY(maze);
+		int f = map_to_vertex(f_y, f_x, maze_getFileCols(maze));
+
+		if(prox[i][f] >= 0){
+			display(player, maze);
+			printf("Final encontrado c/ Floyd-Warshall em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
+	
+			floyd_warshall_draw_path(maze, prox, i, f);       
+		}
+		else{
+			display(player, maze);
+			printf("Não encontrado c/ Floyd-Warshall em %f segundos\n", ((double)t)/CLOCKS_PER_SEC);
 		}
 	}
 

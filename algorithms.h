@@ -17,3 +17,7 @@ void dijkstra_draw_path(MazeDef* maze, int* prev);
 int* a_star(PlayerDef* player, MazeDef* maze, int start, int finish, int visited[maze_getGraphV(maze)]);
 
 int heuristic(MazeDef* maze, int v, int w);
+
+int** floyd_warshall(PlayerDef* player, MazeDef* maze, int visited[maze_getGraphV(maze)], int** prox);
+
+void floyd_warshall_draw_path(MazeDef* maze, int** prox, int i, int f);

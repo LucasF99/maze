@@ -14,6 +14,7 @@ MinHeap* heap_create(int max) {
 	h->max = max;
 	h->pos = 0;
 	h->v = malloc(max * sizeof(int));
+	return h;
 }
 
 void swap(int i, int j, int *v) {
